@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/activity/archive</path>
+    <page_callback>CRM_Replytoemail_Form_Archive</page_callback>
+    <title>Archive</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
