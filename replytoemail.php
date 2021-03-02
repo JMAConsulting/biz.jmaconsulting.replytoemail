@@ -29,6 +29,7 @@ function replytoemail_civicrm_xmlMenu(&$files) {
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
  */
 function replytoemail_civicrm_install() {
+  // Edit inbound email activity.
   $inbound = civicrm_api3('OptionValue', 'get', [
     'sequential' => 1,
     'return' => ["id"],
@@ -37,12 +38,48 @@ function replytoemail_civicrm_install() {
   ]);
   if (!empty($inbound['id'])) {
     civicrm_api3('OptionValue', 'create', [
-      'id' => $inbound['id'],
       'option_group_id' => "activity_type",
+      'name' => ts("Inbound Email"),
       'description' => "",
       'is_reserved' => 1,
       'is_active' => 1,
       'icon' => 'crm-i fa-paper-plane-o',
+    ]);
+  }
+  // Create new reply status for activity if ti doesn't exist.
+  $newReply = civicrm_api3('OptionValue', 'get', [
+    'sequential' => 1,
+    'return' => ["id"],
+    'option_group_id' => "activity_status",
+    'name' => "New Reply",
+  ]);
+  if (empty($newReply['id'])) {
+    civicrm_api3('OptionValue', 'create', [
+      'option_group_id' => "activity_status",
+      'description' => "",
+      'is_active' => 1,
+      'name' => ts("New Reply"),
+    ]);
+  }
+  // Create report instance.
+  $reportInstance = civicrm_api3('ReportInstance', 'create', [
+    'title' => "New Replies",
+    'name' => "New Replies",
+    'report_id' => "activity",
+    'description' => "Easily Track New Replies Received",
+    'is_reserved' => 1,
+    'form_values' => '"a:50:{s:8:\"entryURL\";s:61:\"https://test2-dms.canadahelps.org/dms/report/activity?reset=1\";s:6:\"fields\";a:5:{s:14:\"contact_source\";s:1:\"1\";s:20:\"contact_source_email\";s:1:\"1\";s:16:\"activity_type_id\";s:1:\"1\";s:16:\"activity_subject\";s:1:\"1\";s:18:\"activity_date_time\";s:1:\"1\";}s:17:\"contact_source_op\";s:3:\"has\";s:20:\"contact_source_value\";s:0:\"\";s:19:\"contact_assignee_op\";s:3:\"has\";s:22:\"contact_assignee_value\";s:0:\"\";s:17:\"contact_target_op\";s:3:\"has\";s:20:\"contact_target_value\";s:0:\"\";s:15:\"current_user_op\";s:2:\"eq\";s:18:\"current_user_value\";s:1:\"0\";s:27:\"activity_date_time_relative\";s:0:\"\";s:23:\"activity_date_time_from\";s:0:\"\";s:21:\"activity_date_time_to\";s:0:\"\";s:19:\"activity_subject_op\";s:3:\"has\";s:22:\"activity_subject_value\";s:0:\"\";s:19:\"activity_type_id_op\";s:2:\"in\";s:22:\"activity_type_id_value\";a:1:{i:0;s:2:\"12\";}s:12:\"status_id_op\";s:2:\"in\";s:15:\"status_id_value\";a:1:{i:0;s:2:\"10\";}s:11:\"location_op\";s:3:\"has\";s:14:\"location_value\";s:0:\"\";s:10:\"details_op\";s:3:\"has\";s:13:\"details_value\";s:0:\"\";s:14:\"priority_id_op\";s:2:\"in\";s:17:\"priority_id_value\";a:0:{}s:17:\"street_address_op\";s:3:\"has\";s:20:\"street_address_value\";s:0:\"\";s:14:\"postal_code_op\";s:3:\"has\";s:17:\"postal_code_value\";s:0:\"\";s:7:\"city_op\";s:3:\"has\";s:10:\"city_value\";s:0:\"\";s:13:\"country_id_op\";s:2:\"in\";s:16:\"country_id_value\";a:0:{}s:20:\"state_province_id_op\";s:2:\"in\";s:23:\"state_province_id_value\";a:0:{}s:6:\"gid_op\";s:2:\"in\";s:9:\"gid_value\";a:0:{}s:9:\"order_bys\";a:2:{i:1;a:2:{s:6:\"column\";s:18:\"activity_date_time\";s:5:\"order\";s:3:\"ASC\";}i:2;a:2:{s:6:\"column\";s:16:\"activity_type_id\";s:5:\"order\";s:3:\"ASC\";}}s:11:\"description\";s:33:\"Easily Track New Replies Received\";s:13:\"email_subject\";s:0:\"\";s:8:\"email_to\";s:0:\"\";s:8:\"email_cc\";s:0:\"\";s:9:\"row_count\";s:0:\"\";s:9:\"view_mode\";s:4:\"view\";s:13:\"cache_minutes\";s:2:\"60\";s:10:\"permission\";s:17:\"access CiviReport\";s:9:\"parent_id\";s:0:\"\";s:8:\"radio_ts\";s:0:\"\";s:6:\"groups\";s:0:\"\";s:11:\"instance_id\";N;}",',
+  ]);
+  if ($reportInstance['id']) {
+    // Add to dashboard.
+    civicrm_api3('Dashboard', 'create', [
+      "name" => "report/" . $reportInstance['id'],
+      "label" => "New Replies",
+      "url" => "civicrm/report/instance/" . $reportInstance['id'] . "?reset=1&section=2&context=dashlet&rowCount=10",
+      "permission" => "access CiviReport",
+      "fullscreen_url" => "civicrm/report/instance/" . $reportInstance['id'] . "?reset=1&section=2&context=dashletFullscreen&rowCount=10",
+      "is_active" => 1,
+      "cache_minutes" => 15,
     ]);
   }
   _replytoemail_civix_civicrm_install();
