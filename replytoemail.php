@@ -73,7 +73,7 @@ function replytoemail_civicrm_install() {
     ]);
   if ($reportInstance['id']) {
     // Add to dashboard.
-    civicrm_api3('Dashboard', 'create', [
+    $dashboard = civicrm_api3('Dashboard', 'create', [
       "name" => "report/" . $reportInstance['id'],
       "label" => "New Email Replies",
       "url" => "civicrm/report/instance/" . $reportInstance['id'] . "?reset=1&section=2&context=dashlet&rowCount=10",
@@ -82,6 +82,21 @@ function replytoemail_civicrm_install() {
       "is_active" => 1,
       "cache_minutes" => 15,
     ]);
+
+    if (!empty($dashboard['id'])) {
+      $cids = E::getUsersByRole("client administrator");
+      if (!empty($cids)) {
+        foreach ($cids as $cid) {
+          civicrm_api3('DashboardContact', 'create', [
+            'dashboard_id' => $dashboard['id'],
+            'contact_id' => $cid,
+            'column_no' => 1,
+            'is_active' => 1,
+          ]);
+        }
+      }
+
+    }
   }
   _replytoemail_civix_civicrm_install();
 }
