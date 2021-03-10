@@ -267,6 +267,24 @@ function replytoemail_civicrm_postProcess($formName, &$form) {
 }
 
 /**
+ * Implements hook_civicrm_alterReportVar().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterReportVar
+ */
+function replytoemail_civicrm_alterReportVar($varType, &$var, $reportForm) {
+  if ($varType == 'columns' && $reportForm instanceof CRM_Report_Form_Activity) {
+    $instanceId = CRM_Report_Utils_Report::getInstanceID();
+    if (!empty($instanceId)) {
+      $reportInstance = civicrm_api3('ReportInstance', 'get', ['id' => $instanceId]);
+      if (!empty($reportInstance['values'][$instanceId]) && $reportInstance['values'][$instanceId]['name'] == 'New Email Replies') {
+        $var['civicrm_contact']['fields']['contact_source']['title'] = E::ts('Contact Name');
+        $var['civicrm_email']['fields']['contact_source_email']['title'] = E::ts('Contact Email');
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_civicrm_navigationMenu().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
