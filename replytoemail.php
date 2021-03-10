@@ -278,6 +278,7 @@ function replytoemail_civicrm_alterReportVar($varType, &$var, $reportForm) {
       $reportInstance = civicrm_api3('ReportInstance', 'get', ['id' => $instanceId]);
       if (!empty($reportInstance['values'][$instanceId]) && $reportInstance['values'][$instanceId]['name'] == 'New Email Replies') {
         $var['civicrm_contact']['fields']['contact_source']['title'] = E::ts('Contact Name');
+        $var['civicrm_contact']['filters']['contact_source']['title'] = E::ts('Contact Name');
         $var['civicrm_email']['fields']['contact_source_email']['title'] = E::ts('Contact Email');
       }
     }
