@@ -218,8 +218,9 @@ function replytoemail_civicrm_themes(&$themes) {
  */
 function replytoemail_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Activity_Form_Activity') {
-    $activityTypes = CRM_Activity_BAO_Activity::buildOptions('activity_type_id', 'get', ['flip' => TRUE]);
+    $activityTypes = array_flip(CRM_Activity_BAO_Activity::buildOptions('activity_type_id', 'get', []));
     if ($form->_activityTypeId == $activityTypes['Inbound Email']  && $form->_action & CRM_Core_Action::VIEW) {
+
       // Add the reply button to the form.
       CRM_Core_Region::instance('page-body')->add(array(
         'template' => 'CRM/Replytoemail/Reply.tpl',
