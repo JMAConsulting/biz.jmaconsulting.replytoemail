@@ -280,6 +280,7 @@ function replytoemail_civicrm_alterReportVar($varType, &$var, $reportForm) {
         $var['civicrm_contact']['fields']['contact_source']['title'] = E::ts('Contact Name');
         $var['civicrm_contact']['filters']['contact_source']['title'] = E::ts('Contact Name');
         $var['civicrm_email']['fields']['contact_source_email']['title'] = E::ts('Contact Email');
+        $var['civicrm_phone']['fields']['contact_source_phone']['title'] = E::ts('Contact Phone');
       }
     }
   }
