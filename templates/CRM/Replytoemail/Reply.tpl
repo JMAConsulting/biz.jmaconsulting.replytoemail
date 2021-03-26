@@ -14,11 +14,12 @@
 {literal}
 <script type="text/javascript">
     CRM.$(function($) {
-        $('.crm-submit-buttons').append($('.additional-actions'));
+        $('.crm-activity-view-block .crm-submit-buttons').append($('.additional-actions'));
         $( document ).ajaxComplete(function( event, xhr, settings ) {
             var url = settings.url;
-            if ( url.indexOf('contact/view/activity') != -1) {
+            if (url.indexOf('contact/view/activity') != -1) {
                 $('.ui-dialog-buttonset').append($('.additional-actions'));
+                $('.crm-activity-view-block .crm-submit-buttons').hide();
             }
         });
     });
