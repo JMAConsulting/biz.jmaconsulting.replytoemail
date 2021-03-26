@@ -40,7 +40,7 @@ function replytoemail_civicrm_install() {
     civicrm_api3('OptionValue', 'create', [
       'option_group_id' => "activity_type",
       'name' => ts("Inbound Email"),
-      'description' => "",
+      'description' => "null",
       'is_reserved' => 1,
       'is_active' => 1,
       'icon' => 'crm-i fa-paper-plane-o',
@@ -62,40 +62,62 @@ function replytoemail_civicrm_install() {
       'name' => ts("New Reply"),
     ]);
   }
-  // Create report instance.
-  $reportInstance = civicrm_api3('ReportInstance', 'create', [
-    'title' => "New Email Replies",
+
+  // Check if report instance exists before it is created.
+  $reportInstance = civicrm_api3('ReportInstance', 'get', [
+    'sequential' => 1,
     'name' => "New Email Replies",
     'report_id' => "activity",
-    'description' => "Easily Track New Replies Received",
-    'is_reserved' => 1,
-    'form_values' => "a:52:{s:8:\"entryURL\";s:61:\"https://test2-dms.canadahelps.org/dms/report/activity?reset=1\";s:6:\"fields\";a:5:{s:14:\"contact_source\";s:1:\"1\";s:20:\"contact_source_email\";s:1:\"1\";s:16:\"activity_type_id\";s:1:\"1\";s:16:\"activity_subject\";s:1:\"1\";s:18:\"activity_date_time\";s:1:\"1\";}s:17:\"contact_source_op\";s:3:\"has\";s:20:\"contact_source_value\";s:0:\"\";s:19:\"contact_assignee_op\";s:3:\"has\";s:22:\"contact_assignee_value\";s:0:\"\";s:17:\"contact_target_op\";s:3:\"has\";s:20:\"contact_target_value\";s:0:\"\";s:15:\"current_user_op\";s:2:\"eq\";s:18:\"current_user_value\";s:1:\"0\";s:27:\"activity_date_time_relative\";s:0:\"\";s:23:\"activity_date_time_from\";s:0:\"\";s:21:\"activity_date_time_to\";s:0:\"\";s:19:\"activity_subject_op\";s:3:\"has\";s:22:\"activity_subject_value\";s:0:\"\";s:19:\"activity_type_id_op\";s:2:\"in\";s:22:\"activity_type_id_value\";a:1:{i:0;s:2:\"12\";}s:12:\"status_id_op\";s:2:\"in\";s:15:\"status_id_value\";a:1:{i:0;s:2:\"10\";}s:11:\"location_op\";s:3:\"has\";s:14:\"location_value\";s:0:\"\";s:10:\"details_op\";s:3:\"has\";s:13:\"details_value\";s:0:\"\";s:14:\"priority_id_op\";s:2:\"in\";s:17:\"priority_id_value\";a:0:{}s:17:\"street_address_op\";s:3:\"has\";s:20:\"street_address_value\";s:0:\"\";s:14:\"postal_code_op\";s:3:\"has\";s:17:\"postal_code_value\";s:0:\"\";s:7:\"city_op\";s:3:\"has\";s:10:\"city_value\";s:0:\"\";s:13:\"country_id_op\";s:2:\"in\";s:16:\"country_id_value\";a:0:{}s:20:\"state_province_id_op\";s:2:\"in\";s:23:\"state_province_id_value\";a:0:{}s:6:\"gid_op\";s:2:\"in\";s:9:\"gid_value\";a:0:{}s:9:\"order_bys\";a:2:{i:1;a:2:{s:6:\"column\";s:18:\"activity_date_time\";s:5:\"order\";s:3:\"ASC\";}i:2;a:2:{s:6:\"column\";s:16:\"activity_type_id\";s:5:\"order\";s:3:\"ASC\";}}s:11:\"description\";s:34:\"Easily Track New Replies Received \";s:13:\"email_subject\";s:0:\"\";s:8:\"email_to\";s:0:\"\";s:8:\"email_cc\";s:0:\"\";s:9:\"row_count\";s:2:\"10\";s:9:\"view_mode\";s:8:\"criteria\";s:14:\"addToDashboard\";s:1:\"1\";s:13:\"cache_minutes\";s:2:\"15\";s:11:\"is_reserved\";s:1:\"1\";s:10:\"permission\";s:17:\"access CiviReport\";s:9:\"parent_id\";s:0:\"\";s:8:\"radio_ts\";s:0:\"\";s:6:\"groups\";s:0:\"\";s:11:\"instance_id\";s:2:\"71\";}",
+  ]);
+  if (empty($reportInstance['values'])) {
+    // Create report instance.
+    $reportInstance = civicrm_api3('ReportInstance', 'create', [
+      'title' => "New Email Replies",
+      'name' => "New Email Replies",
+      'report_id' => "activity",
+      'description' => "Easily Track New Replies Received",
+      'is_reserved' => 1,
+      'form_values' => "a:52:{s:8:\"entryURL\";s:61:\"https://test2-dms.canadahelps.org/dms/report/activity?reset=1\";s:6:\"fields\";a:5:{s:14:\"contact_source\";s:1:\"1\";s:20:\"contact_source_email\";s:1:\"1\";s:16:\"activity_type_id\";s:1:\"1\";s:16:\"activity_subject\";s:1:\"1\";s:18:\"activity_date_time\";s:1:\"1\";}s:17:\"contact_source_op\";s:3:\"has\";s:20:\"contact_source_value\";s:0:\"\";s:19:\"contact_assignee_op\";s:3:\"has\";s:22:\"contact_assignee_value\";s:0:\"\";s:17:\"contact_target_op\";s:3:\"has\";s:20:\"contact_target_value\";s:0:\"\";s:15:\"current_user_op\";s:2:\"eq\";s:18:\"current_user_value\";s:1:\"0\";s:27:\"activity_date_time_relative\";s:0:\"\";s:23:\"activity_date_time_from\";s:0:\"\";s:21:\"activity_date_time_to\";s:0:\"\";s:19:\"activity_subject_op\";s:3:\"has\";s:22:\"activity_subject_value\";s:0:\"\";s:19:\"activity_type_id_op\";s:2:\"in\";s:22:\"activity_type_id_value\";a:1:{i:0;s:2:\"12\";}s:12:\"status_id_op\";s:2:\"in\";s:15:\"status_id_value\";a:1:{i:0;s:2:\"10\";}s:11:\"location_op\";s:3:\"has\";s:14:\"location_value\";s:0:\"\";s:10:\"details_op\";s:3:\"has\";s:13:\"details_value\";s:0:\"\";s:14:\"priority_id_op\";s:2:\"in\";s:17:\"priority_id_value\";a:0:{}s:17:\"street_address_op\";s:3:\"has\";s:20:\"street_address_value\";s:0:\"\";s:14:\"postal_code_op\";s:3:\"has\";s:17:\"postal_code_value\";s:0:\"\";s:7:\"city_op\";s:3:\"has\";s:10:\"city_value\";s:0:\"\";s:13:\"country_id_op\";s:2:\"in\";s:16:\"country_id_value\";a:0:{}s:20:\"state_province_id_op\";s:2:\"in\";s:23:\"state_province_id_value\";a:0:{}s:6:\"gid_op\";s:2:\"in\";s:9:\"gid_value\";a:0:{}s:9:\"order_bys\";a:2:{i:1;a:2:{s:6:\"column\";s:18:\"activity_date_time\";s:5:\"order\";s:3:\"ASC\";}i:2;a:2:{s:6:\"column\";s:16:\"activity_type_id\";s:5:\"order\";s:3:\"ASC\";}}s:11:\"description\";s:34:\"Easily Track New Replies Received \";s:13:\"email_subject\";s:0:\"\";s:8:\"email_to\";s:0:\"\";s:8:\"email_cc\";s:0:\"\";s:9:\"row_count\";s:2:\"10\";s:9:\"view_mode\";s:8:\"criteria\";s:14:\"addToDashboard\";s:1:\"1\";s:13:\"cache_minutes\";s:2:\"15\";s:11:\"is_reserved\";s:1:\"1\";s:10:\"permission\";s:17:\"access CiviReport\";s:9:\"parent_id\";s:0:\"\";s:8:\"radio_ts\";s:0:\"\";s:6:\"groups\";s:0:\"\";s:11:\"instance_id\";s:2:\"71\";}",
     ]);
-  if ($reportInstance['id']) {
-    // Add to dashboard.
-    $dashboard = civicrm_api3('Dashboard', 'create', [
-      "name" => "report/" . $reportInstance['id'],
-      "label" => "New Email Replies",
-      "url" => "civicrm/report/instance/" . $reportInstance['id'] . "?reset=1&section=2&context=dashlet&rowCount=10",
-      "permission" => "access CiviReport",
-      "fullscreen_url" => "civicrm/report/instance/" . $reportInstance['id'] . "?reset=1&section=2&context=dashletFullscreen&rowCount=10",
-      "is_active" => 1,
-      "cache_minutes" => 15,
-    ]);
-
-    if (!empty($dashboard['id'])) {
-      $cids = E::getUsersByRole("client administrator");
-      if (!empty($cids)) {
-        foreach ($cids as $cid) {
-          civicrm_api3('DashboardContact', 'create', [
-            'dashboard_id' => $dashboard['id'],
-            'contact_id' => $cid,
-            'column_no' => 1,
-            'is_active' => 1,
-          ]);
-        }
+    if ($reportInstance['id']) {
+      // Check if exists on dashboard.
+      $dashboard = civicrm_api3('Dashboard', 'get', [
+        "name" => "report/" . $reportInstance['id'],
+        "label" => "New Email Replies",
+      ]);
+      if (empty($dashboard['values'])) {
+        // Add to dashboard.
+        $dashboard = civicrm_api3('Dashboard', 'create', [
+          "name" => "report/" . $reportInstance['id'],
+          "label" => "New Email Replies",
+          "url" => "civicrm/report/instance/" . $reportInstance['id'] . "?reset=1&section=2&context=dashlet&rowCount=10",
+          "permission" => "access CiviReport",
+          "fullscreen_url" => "civicrm/report/instance/" . $reportInstance['id'] . "?reset=1&section=2&context=dashletFullscreen&rowCount=10",
+          "is_active" => 1,
+          "cache_minutes" => 15,
+        ]);
       }
 
+      if (!empty($dashboard['id'])) {
+        $cids = E::getUsersByRole("client administrator");
+        if (!empty($cids)) {
+          foreach ($cids as $cid) {
+            // Only add to dashboard if not already added.
+            $dashboardContact = civicrm_api3('DashboardContact', 'get', [
+              'dashboard_id' => $dashboard['id'],
+              'contact_id' => $cid,
+            ]);
+            if (empty($dashboardContact['values'])) {
+              civicrm_api3('DashboardContact', 'create', [
+                'dashboard_id' => $dashboard['id'],
+                'contact_id' => $cid,
+                'column_no' => 1,
+                'is_active' => 1,
+              ]);
+            }
+          }
+        }
+      }
     }
   }
   _replytoemail_civix_civicrm_install();
@@ -220,7 +242,8 @@ function replytoemail_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Activity_Form_Activity') {
     $activityTypes = array_flip(CRM_Activity_BAO_Activity::buildOptions('activity_type_id', 'get', []));
     if ($form->_activityTypeId == $activityTypes['Inbound Email']  && $form->_action & CRM_Core_Action::VIEW) {
-
+      // Set the form title.
+      CRM_Utils_System::setTitle($form->getVar('_values')['target_contact_value']);
       // Add the reply button to the form.
       CRM_Core_Region::instance('page-body')->add(array(
         'template' => 'CRM/Replytoemail/Reply.tpl',
@@ -235,11 +258,12 @@ function replytoemail_civicrm_buildForm($formName, &$form) {
       // Fetch the subject.
       $subject = civicrm_api3('Activity', 'get', [
         'id' => $activityId,
-        'return' => ['subject'],
+        'return' => ['subject', 'details'],
         'sequential' => 1,
       ]);
       if (!empty($subject['values'])) {
         $defaults['subject'] = 'RE: ' . $subject['values'][0]['subject'];
+        $defaults['html_message'] = $subject['values'][0]['details'];
       }
       $form->setDefaults($defaults);
     }
@@ -281,6 +305,17 @@ function replytoemail_civicrm_alterReportVar($varType, &$var, $reportForm) {
         $var['civicrm_contact']['filters']['contact_source']['title'] = E::ts('Contact Name');
         $var['civicrm_email']['fields']['contact_source_email']['title'] = E::ts('Contact Email');
         $var['civicrm_phone']['fields']['contact_source_phone']['title'] = E::ts('Contact Phone');
+      }
+    }
+  }
+  if ($varType == 'rows' && $reportForm instanceof CRM_Report_Form_Activity) {
+    $instanceId = CRM_Report_Utils_Report::getInstanceID();
+    if (!empty($instanceId)) {
+      $reportInstance = civicrm_api3('ReportInstance', 'get', ['id' => $instanceId]);
+      if (!empty($reportInstance['values'][$instanceId]) && $reportInstance['values'][$instanceId]['name'] == 'New Email Replies') {
+        foreach ($var as &$row) {
+          $row['civicrm_activity_activity_type_id_class'] = 'crm-popup';
+        }
       }
     }
   }
