@@ -40,7 +40,7 @@ function replytoemail_civicrm_install() {
     civicrm_api3('OptionValue', 'create', [
       'option_group_id' => "activity_type",
       'name' => ts("Inbound Email"),
-      'description' => "null",
+      'description' => ' ',
       'is_reserved' => 1,
       'is_active' => 1,
       'icon' => 'crm-i fa-paper-plane-o',
