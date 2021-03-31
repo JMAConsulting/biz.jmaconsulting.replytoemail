@@ -270,6 +270,7 @@ function replytoemail_civicrm_buildForm($formName, &$form) {
       $activityAssignee = civicrm_api3('ActivityContact', 'get', [
         'activity_id' => $activityId,
         'record_type_id' => CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_ActivityContact', 'record_type_id', 'Activity Assignees'),
+        'sequential' => 1,
       ]);
       if (!empty($activityAssignee['values'])) {
         $contactID = $activityAssignee['values'][0]['contact_id'];
@@ -284,6 +285,7 @@ function replytoemail_civicrm_buildForm($formName, &$form) {
           'id' => "$contactID::{$value['email']}",
         ];
         $form->assign('toContact', json_encode($toArray));
+        CRM_Utils_System::setTitle($value['sort_name']);
       }
       $form->setDefaults($defaults);
     }
