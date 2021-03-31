@@ -265,6 +265,26 @@ function replytoemail_civicrm_buildForm($formName, &$form) {
         $defaults['subject'] = 'RE: ' . $subject['values'][0]['subject'];
         $defaults['html_message'] = $subject['values'][0]['details'];
       }
+
+      // set 'Inbound Email' Assignee (instead of target or 'with contact') as recipient
+      $activityAssignee = civicrm_api3('ActivityContact', 'get', [
+        'activity_id' => $activityId,
+        'record_type_id' => CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_ActivityContact', 'record_type_id', 'Activity Assignees'),
+      ]);
+      if (!empty($activityAssignee['values'])) {
+        $contactID = $activityAssignee['values'][0]['contact_id'];
+        $value = civicrm_api3('Contact', 'get', [
+          'id' => $contactID,
+          'sequential' => 1,
+          'return' => ['sort_name', 'email', 'do_not_email', 'is_deceased', 'on_hold', 'display_name', 'preferred_mail_format'],
+          'options' => ['limit' => 0],
+        ])['values'][0];
+        $toArray[] = [
+          'text' => '"' . $value['sort_name'] . '" <' . $value['email'] . '>',
+          'id' => "$contactID::{$value['email']}",
+        ];
+        $form->assign('toContact', json_encode($toArray));
+      }
       $form->setDefaults($defaults);
     }
   }
