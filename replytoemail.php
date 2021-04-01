@@ -269,7 +269,7 @@ function replytoemail_civicrm_buildForm($formName, &$form) {
       // set 'Inbound Email' Assignee (instead of target or 'with contact') as recipient
       $activityAssignee = civicrm_api3('ActivityContact', 'get', [
         'activity_id' => $activityId,
-        'record_type_id' => CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_ActivityContact', 'record_type_id', 'Activity Assignees'),
+        'record_type_id' => CRM_Core_PseudoConstant::getKey('CRM_Activity_BAO_ActivityContact', 'record_type_id', 'Activity Targets'),
         'sequential' => 1,
       ]);
       if (!empty($activityAssignee['values'])) {
@@ -288,6 +288,19 @@ function replytoemail_civicrm_buildForm($formName, &$form) {
         CRM_Utils_System::setTitle($value['sort_name']);
       }
       $form->setDefaults($defaults);
+    }
+  }
+}
+
+function replytoemail_civicrm_pre($op, $objectName, $id, &$params) {
+  if ($objectName === 'Activity' && $op === 'create' && $params['activity_type_id'] === CRM_Core_PseudoConstant::getKey('CRM_Core_BAO_Activity', 'activity_type_id', 'Inbound Email')) {
+    // Take the first target contact originally set in deprecated_activity_buildmailparams which would have been the to line.
+    $original_source_contact = $params['source_contact_id'];
+    $params['target_contact_id'] = [$original_source_contact];
+    unset($params['assignee_contact_id']);
+    $source_contact_id = Civi::settings('replytoemail_source_contact_id');
+    if (!empty($source_contact_id)) {
+      $params['source_contact_id'] = $source_contact_id;
     }
   }
 }
@@ -348,14 +361,14 @@ function replytoemail_civicrm_alterReportVar($varType, &$var, $reportForm) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
  */
-//function replytoemail_civicrm_navigationMenu(&$menu) {
-//  _replytoemail_civix_insert_navigation_menu($menu, 'Mailings', array(
-//    'label' => E::ts('New subliminal message'),
-//    'name' => 'mailing_subliminal_message',
-//    'url' => 'civicrm/mailing/subliminal',
-//    'permission' => 'access CiviMail',
-//    'operator' => 'OR',
-//    'separator' => 0,
-//  ));
-//  _replytoemail_civix_navigationMenu($menu);
-//}
+function replytoemail_civicrm_navigationMenu(&$menu) {
+  _replytoemail_civix_insert_navigation_menu($menu, 'Administer/System Settings', array(
+    'label' => E::ts('Reply To Email Extension Settings'),
+    'name' => 'mailing_subliminal_message',
+    'url' => 'civicrm/admin/settings/replytoemail',
+    'permission' => 'administer CiviMail',
+    'operator' => 'OR',
+    'separator' => 0,
+  ));
+  _replytoemail_civix_navigationMenu($menu);
+}

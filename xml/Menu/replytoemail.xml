@@ -6,4 +6,10 @@
     <title>Archive</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/admin/setting/replytoemail</path>
+    <page_callback>CRM_Admin_Form_Generic</page_callback>
+    <title>Reply To Email Extension Settings</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
 </menu>
