@@ -89,6 +89,7 @@ class CRM_Replytoemail_Upgrader extends CRM_Replytoemail_Upgrader_Base {
         }
       }
     }
+    return TRUE;
   }
 
   /**
