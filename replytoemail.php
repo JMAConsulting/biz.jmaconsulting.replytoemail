@@ -263,7 +263,7 @@ function replytoemail_civicrm_buildForm($formName, &$form) {
       ]);
       if (!empty($subject['values'])) {
         $defaults['subject'] = 'RE: ' . $subject['values'][0]['subject'];
-        $defaults['html_message'] = CRM_Utils_String::stripAlternatives($subject['values'][0]['details']);
+        $defaults['html_message'] = nl2br(CRM_Utils_String::stripAlternatives($subject['values'][0]['details']));
       }
 
       // set 'Inbound Email' Assignee (instead of target or 'with contact') as recipient
